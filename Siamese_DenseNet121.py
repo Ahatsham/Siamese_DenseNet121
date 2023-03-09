@@ -159,9 +159,9 @@ input1 = tf.keras.layers.Input(shape=(224,224,3))
 input2 = tf.keras.layers.Input(shape=(224,224,3))
 
 
-embedding_network1 = base_model(input1)
+embedding_network1 = head_model(input1)
 
-embedding_network2 = base_model(input2)
+embedding_network2 = head_model(input2)
 
 '''
 distance = tf.keras.layers.Lambda(euclidean_distance, output_shape=None)([embedding_network1, embedding_network2])
