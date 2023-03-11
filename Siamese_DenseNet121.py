@@ -153,14 +153,14 @@ Create the base network for learning shared representations
 base_model = tf.keras.applications.DenseNet121(include_top=False, input_shape=(224,224,3), weights='imagenet')
 #base_model = tf.keras.applications.ResNet152(include_top=False, input_shape=(224,224,3), weights='imagenet')
 head_model = base_model.output
+head_model = tf.keras.layers.Flatten()(head_model)
+head_model = tf.keras.layers.Dropout(0.5)(head_model)
 head_model = tf.keras.Model(inputs = base_model.inputs, outputs = head_model)
 
 input1 = tf.keras.layers.Input(shape=(224,224,3))
 input2 = tf.keras.layers.Input(shape=(224,224,3))
 
-
 embedding_network1 = head_model(input1)
-
 embedding_network2 = head_model(input2)
 
 '''
@@ -174,14 +174,15 @@ output_layer = tf.keras.layers.Dense(1, activation="sigmoid")(distance1)
 '''
 Add a classification layer
 '''
-
-out1 = tf.keras.layers.Flatten()(embedding_network1)
+out1 = tf.keras.layers.BatchNormalization()(embedding_network1)
+out1 = tf.keras.layers.Dense(64, activation="relu")(out1)
 output1 = tf.keras.layers.Dense(5, activation="softmax")(out1)
-out2 = tf.keras.layers.Flatten()(embedding_network2)
+
+out2 = tf.keras.layers.BatchNormalization()(embedding_network2)
+out2 = tf.keras.layers.Dense(64, activation="relu")(out2)
 output2 = tf.keras.layers.Dense(5, activation="softmax")(out2)
 
 model_1 = tf.keras.models.Model(inputs=[input1, input2], outputs=[output1, output2])
-
 '''
 Display the model summary
 '''
